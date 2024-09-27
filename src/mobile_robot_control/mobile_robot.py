@@ -75,16 +75,17 @@ class MobileRobot(Robot):
     @property
     def RCF(self):
         if self.mobile_client != None:
-            # if self._RCF == None:
-            self.mobile_client.tf_subscribe(
-                "robot_arm_base",
-                "robot_base_footprint",
-                self._receive_base_frame_callback,
-                timeout=5,
-            )
+            if self._RCF == None:
+                self.mobile_client.tf_subscribe(
+                    "robot_arm_base",
+                    "robot_base_footprint",
+                    self._receive_base_frame_callback,
+                    timeout=5,
+                )
             if self.lift_height != 0:
-                self._RCF.point.z += self.lift_height
-        return self._RCF
+                self._RCF_lift = self._RCF.copy()
+                self._RCF_lift.point.z += self.lift_height
+        return self._RCF_lift
 
     def _receive_base_frame_callback(self, message):
         pose_point = Point(
