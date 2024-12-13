@@ -20,7 +20,7 @@
 <sup>(1): Windows 10 Home does not support running Docker.</sup>
 
 ## Dependencies
-* [compas 2.2.0 or higher](https://compas.dev/index.html)
+* [compas 2.2.0](https://compas.dev/index.html)
 * [compas_fab 1.0.2 or higher](https://gramaziokohler.github.io/compas_fab/latest/)
 
 ## Getting Started
@@ -31,12 +31,12 @@ After installing Rhino 8, open Rhino and run ScriptEditor on the Rhino command l
 
 Execute the commands below in Anaconda Prompt:
     
-    C:\Users\your_user_name\.rhinocode\py39-rh8\python.exe -m pip install compas compas_robots roslibpy pyserial
+    C:\Users\your_user_name\.rhinocode\py39-rh8\python.exe -m pip install compas==2.2.0 compas_robots==0.4.0 roslibpy pyserial
     C:\Users\your_user_name\.rhinocode\py39-rh8\python.exe -m pip install --no-deps compas_fab
 
 If you have an older version, you have to force install a new version:
     
-    C:\Users\your_user_name\.rhinocode\py39-rh8\python.exe -m pip install --upgrade compas compas_robots roslibpy pyserial
+    C:\Users\your_user_name\.rhinocode\py39-rh8\python.exe -m pip install --upgrade compas==2.2.0 compas_robots==0.4.0 roslibpy pyserial
     C:\Users\your_user_name\.rhinocode\py39-rh8\python.exe -m pip install --upgrade --no-deps compas_fab
     
 ### 2. Cloning the repositories
