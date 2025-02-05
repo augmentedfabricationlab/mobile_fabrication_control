@@ -406,7 +406,7 @@ class ExecuteMotionTask(URTask):
         # Go to the target frame with radius 0.
         self.urscript.add_line("\tsleep({})".format(1.0))
         self.urscript.move_linear(frame=self.robot.from_WCF_to_RCF(frame_WCF), velocity=self.velocity/2, radius=0.0)
-        self.log(self.urscript.commands)
+        #self.log(self.urscript.commands)
 
 ### UR direct tasks ###
 
@@ -430,37 +430,13 @@ class MoveJointsTask(URTask):
         self.CoG = CoG
 
     def create_urscript(self):
-        if self.robot.attached_tool:
-            tool_angle_axis = list(self.robot.attached_tool.frame.point) + list(
-                self.robot.attached_tool.frame.axis_angle_vector
-            )
-        else:
-            tool0_frame = Frame([0, 0, 0], [1, 0, 0], [0, 1, 0])
-            tool_angle_axis = list(tool0_frame.point) + list(
-                tool0_frame.axis_angle_vector
-            )
-
-        self.urscript = URScript_AreaGrip(*self.robot_address)
-        self.urscript.start()
-        self.urscript.set_tcp(tool_angle_axis)
         self.urscript.set_payload(self.payload, self.CoG)
         self.urscript.add_line('textmsg(">> TASK{}.")'.format(self.key))
 
-        self.urscript.set_socket(self.server.ip, self.server.port, self.server.name)
-        self.urscript.socket_open(self.server.name)
-
-        self.urscript.move_joint(self.configuration, self.velocity, self.radius)
-
-        self.urscript.socket_send_line_string(self.req_msg, self.server.name)
-        self.urscript.socket_close(self.server.name)
-
-        self.urscript.end()
-        self.urscript.generate()
-        self.log("Going to set configuration.")
-
-    def run(self, stop_thread):
-        self.create_urscript()
-        super(MoveJointsTask, self).run(stop_thread)
+        joint_configuration = Configuration.from_revolute_values(self.configuration.revolute_values)
+        
+        self.urscript.move_joint(joint_configuration, self.velocity, self.radius)
+        self.log("Going to set configuration {}.".format(self.configuration))
 
 class MoveLinearTask(URTask):
     def __init__(
@@ -489,37 +465,12 @@ class MoveLinearTask(URTask):
         else:
             frame_RCF = self.frame
 
-        if self.robot.attached_tool:
-            tool_angle_axis = list(self.robot.attached_tool.frame.point) + list(
-                self.robot.attached_tool.frame.axis_angle_vector
-            )
-        else:
-            tool0_frame = Frame([0, 0, 0], [1, 0, 0], [0, 1, 0])
-            tool_angle_axis = list(tool0_frame.point) + list(
-                tool0_frame.axis_angle_vector
-            )
-
-        self.urscript = URScript_AreaGrip(*self.robot_address)
-        self.urscript.start()
-        self.urscript.set_tcp(tool_angle_axis)
         self.urscript.set_payload(self.payload)
         self.urscript.add_line('textmsg(">> TASK{}.")'.format(self.key))
 
-        self.urscript.set_socket(self.server.ip, self.server.port, self.server.name)
-        self.urscript.socket_open(self.server.name)
-
         self.urscript.move_linear(frame_RCF, self.velocity, self.radius)
 
-        self.urscript.socket_send_line_string(self.req_msg, self.server.name)
-        self.urscript.socket_close(self.server.name)
-
-        self.urscript.end()
-        self.urscript.generate()
-        self.log("Going to frame.")
-
-    def run(self, stop_thread):
-        self.create_urscript()
-        super(MoveLinearTask, self).run(stop_thread)
+        self.log("Going to frame {}.".format(self.frame))
 
 ### Marker related tasks ###
 
